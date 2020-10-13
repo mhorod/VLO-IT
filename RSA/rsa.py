@@ -62,7 +62,7 @@ def find_lsb(value):
 
 def find_msb(value):
     """Return most significant bit set up"""
-    return len(bin(value)) - 2
+    return value.bit_length() - 1
 
 
 def fast_power(base, power, modulus):
@@ -79,9 +79,9 @@ def fast_power(base, power, modulus):
 
 
 def gcd(a, b):
-    if b == 0:
-        return a
-    return gcd(b, a % b)
+    while b != 0:
+        a, b = b, a % b
+    return a
 
 
 def egcd(a, b):
@@ -97,8 +97,8 @@ def egcd(a, b):
 
 def generate_keys():
     """Generate public and private RSA keys"""
-    p = random_prime(8)
-    q = random_prime(8)
+    p = random_prime(256)
+    q = random_prime(256)
     N = p * q
     totient = (p - 1) * (q - 1)
     while True:
@@ -114,10 +114,35 @@ def generate_keys():
 def encode(value, key):
     return fast_power(value, key.exponent, key.modulus)
 
+def encode_array(values, key):
+    return [encode(value, key) for value in values]
+
+
+def chunks(values, chunk_size):
+    for i in range(0, len(values), chunk_size):
+        yield values[i:i + chunk_size]
+
+def encode_bytes(data, key):
+    result = b''
+    bytes_in_key = key.bit_length() // 8
+    for chunk in chunks(data, bytes_in_key):
+        chunk_value = int.from_bytes(chunk, 'big')
+        encoded_chunk_value = encode(chunk_value, key)
+        encoded_chunk = encoded_chunk_value.to_bytes(
+                (encoded_chunk_value.bit_length + 7) // 8, 'big')
+    
+    return result
+
+def encode_text(text, key):
+    text_bytes = bytes(text, "ascii")
+    return encode_bytes(text_bytes, key)
+
+def decode_to_text(data, keys):
+    pass
 
 if __name__ == '__main__':
     public, private = generate_keys()
-    value = 12345
-    v1 = encode(value, public)
-    v2 = encode(v1, private)
+    value = b'1234'
+    v1 = encode_bytes(value, public)
+    v2 = encode_bytes(v1, private)
     print(v1, v2)
