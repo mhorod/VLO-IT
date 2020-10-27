@@ -7,6 +7,9 @@ class Key:
         self.exponent = exponent
         self.modulus = modulus
 
+    def __str__(self):
+        return f"({self.exponent}, {self.modulus})"
+
 
 def random_prime(bits=256):
     attempt = 0
@@ -97,7 +100,7 @@ def egcd(a, b):
 
 
 def generate_keys(bits=256):
-    """Generate public and private RSA keys"""
+    """Generate (public, private) rsa keys. """
     p = random_prime(bits)
     q = random_prime(bits - 1)  # So that p != q
     N = p * q
@@ -209,3 +212,44 @@ def encode_bytes_to_text(data, encoding='ascii'):
 
 def decode_bytes_from_text(text, encoding='ascii'):
     return base64.b64decode(bytes(text, encoding))
+
+
+def demo():
+    """Demo featuring example usage."""
+
+    print("Demonstration of fetures\n")
+
+    public, private = generate_keys(bits=8)
+    print(f"Generated keys: {public}, {private}")
+    print()
+
+    sample_integer = 42
+    encrypted_integer = encrypt_integer(sample_integer, public)
+    decrypted_integer = encrypt_integer(encrypted_integer, private)
+
+    print(f"Value to encrypt: {sample_integer}")
+    print(f"Encrypted: {encrypted_integer}")
+    print(f"Decrypted: {decrypted_integer}")
+
+    print()
+
+    sample_text = "This is a sample text that needs to be split into blocks"
+    encrypted_text = encrypt_text(sample_text, public)
+    decrypted_text = decrypt_text(encrypted_text, private)
+
+    print(f"Text to encrypt: {sample_text}")
+    print(f"Encrypted: {encrypted_text}")
+    print(f"Decrypted: {decrypted_text}")
+    print()
+
+    sample_bytes = b'Some bytes \x01\xaa\xbb\xcc\xdd\xee\xff'
+    encrypted_bytes = encrypt_bytes(sample_bytes, public)
+    decrypted_bytes = decrypt_bytes(encrypted_bytes, private)
+    print(f"Bytes to encrypt: {sample_bytes}")
+    print(f"Encrypted: {encrypted_bytes}")
+    print(f"Decrypted: {decrypted_bytes}")
+    print()
+
+
+if __name__ == "__main__":
+    demo()

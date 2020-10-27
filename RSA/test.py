@@ -56,8 +56,18 @@ def test_encrypted_bytes_can_be_decrypted():
     assert data == rsa.decrypt_bytes(rsa.encrypt_bytes(data, public), private)
 
 
-def test_encrypted_text_can_be_encrypted():
+def test_encrypted_text_can_be_decrypted():
     public, private = rsa.generate_keys()
     text_length = 256
     text = ''.join(chr(random.randint(32, 125)) for _ in range(text_length))
     assert text == rsa.decrypt_text(rsa.encrypt_text(text, public), private)
+
+
+def test_encrypted_utf8_text_can_be_decrypted():
+    public, private = rsa.generate_keys()
+    text = "Zażółć gęślą jaźń"
+    assert text == rsa.decrypt_text(rsa.encrypt_text(text,
+                                                     public,
+                                                     encoding="utf-8"),
+                                    private,
+                                    encoding="utf-8")
