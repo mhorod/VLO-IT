@@ -2,7 +2,7 @@
 
 Problems solved on IT classes in my highschool.
 
-While code is mostly in english, tasks and names are in polish.
+While code is mostly in english, tasks and names are (sometimes) in polish.
 
 
 # Changelog
