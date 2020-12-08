@@ -1,0 +1,9 @@
+{
+  "FormattingOptions": {
+    "EnableEditorConfigSupport": false,
+    "NewLine": "\n",
+    "UseTabs": false,
+    "TabSize": 2,
+    "IndentationSize": 2
+  }
+}
