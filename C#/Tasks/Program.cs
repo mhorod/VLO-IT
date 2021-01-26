@@ -271,9 +271,19 @@ public class Team : ICloneable, IWritable
     var stream = new FileStream(filename, FileMode.Create);
     var formatter = new BinaryFormatter();
     formatter.Serialize(stream, this);
+    stream.Close();
   }
 
-  public void ReadBinary(string filename) { }
+  public void ReadBinary(string filename)
+  {
+    var stream = new FileStream(filename, FileMode.Open);
+    var formatter = new BinaryFormatter();
+    Team data = (Team)formatter.Deserialize(stream);
+    stream.Close();
+    name = data.name;
+    leader = data.leader;
+    members = data.members;
+  }
 
   public void WriteXml(string filename)
   {
@@ -281,6 +291,7 @@ public class Team : ICloneable, IWritable
     var serializer = new XmlSerializer(this.GetType());
     serializer.Serialize(stream, this);
   }
+
   public void ReadXml(string filename) { }
 }
 
@@ -308,13 +319,39 @@ class Program
           "2015-05-13"));
 
     Team cloned = team.Clone() as Team;
+
+    Console.WriteLine("Cloned");
+    Console.WriteLine(team);
+    Console.WriteLine(cloned);
+
     cloned.name = "NewTeam";
     cloned.leader.name = "Rafal";
 
+    cloned.RemoveMember("92102266738");
+    cloned.AddMember(
+        new TeamMember(
+          "Bob", "Kowalski",
+          "1948-05-13",
+          "12345671234",
+          Gender.M,
+          "bob",
+          "2010-07-12"));
+
+
+    Console.WriteLine("Modified clone");
     Console.WriteLine(team);
     Console.WriteLine(cloned);
 
     cloned.WriteXml("test.xml");
+
+
+    cloned.WriteBinary("test.bin");
+    team.ReadBinary("test.bin");
+
+    Console.WriteLine("Wrote clone to file and read team");
+    Console.WriteLine(cloned);
+    Console.WriteLine(team);
+
   }
 
 }
